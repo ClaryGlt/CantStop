@@ -523,31 +523,93 @@ public class Jeu{
     // --------------------------------------------------------
     
     /**
-     * Test la possibilité d'avancement sur la colone "valeur" suivant l'état actuel du jeu
+     * Test la possibilité d'avancement sur la colonne "valeur" suivant l'état actuel du jeu
      * @param valeur la colonne à tester
-     * @return 0 si pas possible, 1 si c'est possible sur une colone ou un bonze est déja présent, 10 si c'est possible avec un nouveau bonze
+     * @return 0 si pas possible, 1 si c'est possible sur une colonne ou un bonze est déjà présent, 10 si c'est possible avec un nouveau bonze
      */
     public int possible(int valeur){
-        
-        // A compléter
-        
-        return 0;
+        int bonz = -1;
+        //on vérifie si le bonze est déjà présent dans la colonne
+        for (int i = 0; i < 3; i++) {
+            if (bonzes[i][0] == valeur) {
+                bonz = i;
+            }
+        }
+        if(bonz==-1){
+            if(bonzesRestants>0){
+                return 10;
+            }
+            return 0;
+        }
+        else{
+            if(bloque[valeur]==true){
+                return 0;
+            }
+            return 1;
+        }
     }
-    
+
     /**
      * Regroupe les dés et appelle la méthode possible pour chaque regroupement
      * @param aucun
      * @return aucun
      */
     public void regroupement() {
-        
+        possibilite[0][0]=des[0]+des[1];
+        possibilite[1][0]=des[2]+des[3];
+        possibilite[2][0]=des[0]+des[2];
+        possibilite[3][0]=des[1]+des[3];
+        possibilite[4][0]=des[0]+des[3];
+        possibilite[5][0]=des[2]+des[1];
+
+        for(int i=0; i<6; i++){
+            possibilite[i][1] = possible(possibilite[i][0]);
+            if(possibilite[i][1] != 0){
+                choixPossible = true;
+            }
+        }
     }
     
     /**
      * Construction des choix pouvant être joués
      */
     public void construireChoix(){
-        
+        regroupement();
+        //REGROUPER LES CHOIX
+        for(int i=0, 2*i<6; i++){
+            if((possibilite[i][1]+possibilite[i+1][1]==20) && (bonzesRestants==2)){
+                lesChoix[nbChoix][0] = possibilite[i][0];
+                lesChoix[nbChoix][1] = possibilite[i+1][0];
+                nbChoix++;
+            }
+            if((possibilite[i][1]+possibilite[i+1][1]==20) && (bonzesRestants==1)){
+                lesChoix[nbChoix][0] = possibilite[i][0];
+                lesChoix[nbChoix][1] = 0;
+                lesChoix[nbChoix+1][0] = possibilite[i+1][0];
+                lesChoix[nbChoix+1][1] = 0;
+                nbChoix+=2;
+            }
+            if(possibilite[i][1]+possibilite[i+1][1]==11){
+                lesChoix[nbChoix][0] = possibilite[i][0];
+                lesChoix[nbChoix][1] = possibilite[i+1][0];
+                nbChoix++;
+            }
+            if(possibilite[i][1]+possibilite[i+1][1]==10){
+                if(possibilite[i][1]==0){
+                    lesChoix[nbChoix][0] = possibilite[i+1][0];
+                }
+                else {
+                    lesChoix[nbChoix][0] = possibilite[i][0];
+                }
+                nbChoix++;
+            }
+            if(possibilite[i][1]+possibilite[i+1][1]==2){
+                lesChoix[nbChoix][0] = possibilite[i][0];
+                lesChoix[nbChoix][1] = possibilite[i+1][0];
+                nbChoix++;
+            }
+            //MANQUE 1 ET 0
+        }
     }
 
     // --------------------------------------------------------
