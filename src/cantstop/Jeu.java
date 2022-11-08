@@ -65,6 +65,7 @@ public class Jeu{
 	    bloque[i]=false;
 	des= new int[4];
 	possibilite= new int[6][2];
+    //6 par 2 dans les cas où 1 bonze restant
 	lesChoix = new int[6][2];
 	choixPossible=false;
 	bonzes=new int[3][2];
@@ -465,20 +466,42 @@ public class Jeu{
      */
     public void changementJoueur(){
         // A compléter
+        resetChoix();
+        resetBonzes();
+        resetBloques();
+        if(actif<(nbJoueurs-1)){
+            actif++;
+        }
+        else{
+            actif = 0;
+        }
+        premierCoup = true;
     }
     
     /**
      * Réinitialisation des choix possibles
      */
     public void resetChoix(){
-        // A compléter
+        // On réinitialise le tableau de choix
+        for(int i=0; i<6; i++){
+            lesChoix[i][0] = 0;
+            lesChoix[i][1] = 0;
+        }
+        // On réinitialise le nb de choix
+        nbChoix = 0;
+        // On remet choixPossibles à faux
+        choixPossible = false;
     }
 
     /**
      * Réinitialisation des Bonzes
      */
     public void resetBonzes(){
-        // A compléter
+        for(int i=0; i<3; i++){
+            bonzes[i][0] = 0;
+            bonzes[i][1] = 0;
+        }
+        bonzesRestants = 3;
     }
     
     /**
@@ -486,6 +509,9 @@ public class Jeu{
      */
     public void resetBloques(){
         // A compléter
+        for(int i=0; i<11 ;i++) {
+            bloque[i] = false;
+        }
     }
     
     // --------------------------------------------------------
