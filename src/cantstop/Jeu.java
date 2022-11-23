@@ -45,7 +45,7 @@ public class Jeu{
     private Clavier clavier;
 
     private Strategie stratA = new Strat0();
-    private Strategie stratB = new Strat0();
+    private Strategie stratB = new Strat143();
 
     private int commence;
 
