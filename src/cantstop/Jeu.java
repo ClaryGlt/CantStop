@@ -46,7 +46,7 @@ public class Jeu{
 
     private Strategie stratA = new Strat0();
     private Strategie stratB = new Strat0();
-    
+
     private int commence;
 
     /**
@@ -55,47 +55,46 @@ public class Jeu{
     public void init_commun(){
         //initialisation des valeurs par défaut
         rand = new Random();
-	nbCoup=0;
-	maximum= new int[11];
-	fini = new boolean[11];
-	for(int i=0; i<11 ;i++)
-	    fini[i]=false;
-	bloque = new boolean[11];
-	for(int i=0; i<11 ;i++)
-	    bloque[i]=false;
-	des= new int[4];
-	possibilite= new int[6][2];
-    //6 par 2 dans les cas où 1 bonze restant
-	lesChoix = new int[6][2];
-	choixPossible=false;
-	bonzes=new int[3][2];
-	bonzesRestants=3;
-	maximum[0]=3;
-	maximum[1]=5;
-	maximum[2]=7;
-	maximum[3]=9;
-	maximum[4]=11;
-	maximum[5]=13;
-	maximum[6]=11;
-	maximum[7]=9;
-	maximum[8]=7;
-	maximum[9]=5;
-	maximum[10]=3;
+        nbCoup=0;
+        maximum= new int[11];
+        fini = new boolean[11];
+        for(int i=0; i<11 ;i++)
+            fini[i]=false;
+        bloque = new boolean[11];
+        for(int i=0; i<11 ;i++)
+            bloque[i]=false;
+        des= new int[4];
+        possibilite= new int[6][2];
+        lesChoix = new int[6][2];
+        choixPossible=false;
+        bonzes=new int[3][2];
+        bonzesRestants=3;
+        maximum[0]=3;
+        maximum[1]=5;
+        maximum[2]=7;
+        maximum[3]=9;
+        maximum[4]=11;
+        maximum[5]=13;
+        maximum[6]=11;
+        maximum[7]=9;
+        maximum[8]=7;
+        maximum[9]=5;
+        maximum[10]=3;
     };
-    
+
     /**
      * Initialisation du jeu
      */
     public void init(){
         // Variables temporaires
-	int b;
+        int b;
         String p;
-        
+
         // Initialisation commune
         init_commun();
-        
+
         // Initialisation des joueurs
-	clavier= new Clavier();
+        clavier= new Clavier();
         System.out.println("Veuillez saisir le nombre de joueurs ");
         nbJoueurs = clavier.getIntBetween(2, 4);
 
@@ -115,7 +114,7 @@ public class Jeu{
             b = clavier.getIntBetween(0, 1);
             joueurs[i].status = b;
         }
-        
+
         // Determination du 1er joueur
         actif = rand.nextInt(nbJoueurs);
         System.out.println();
@@ -126,7 +125,52 @@ public class Jeu{
         System.out.println();
         premierCoup=true;
     }
-    
+
+    /**
+     * Initialisation du jeu
+     */
+    public void initHvsIA(int nStrat){
+        // Initialisation commune
+        init_commun();
+
+        nbJoueurs = 2;
+
+        // Initialisation des joueurs
+        joueurs = new Joueur[2];
+
+        // Humain
+        joueurs[0] = new Joueur();
+        joueurs[0].avancement = new int[11];
+        joueurs[0].score = 0;
+        joueurs[0].pseudo = "Humain";
+        joueurs[0].status = 0;
+
+        joueurs[1]=new Joueur();
+        joueurs[1].avancement = new int[11];
+        joueurs[1].score=0;
+        joueurs[1].pseudo="IA";
+        joueurs[1].status=1;
+
+        stratA = null;
+        try {
+            stratB = (Strategie) Class.forName("strategies.Strat"+nStrat).getDeclaredConstructor().newInstance();
+            // Determination du 1er joueur
+            actif = rand.nextInt(nbJoueurs);
+            System.out.println();
+            System.out.println("                         -----------------------------------------------");
+            System.out.print("                               ");
+            System.out.println("J" + (actif+1) + ": " + joueurs[actif].pseudo + " commence la partie.");
+            System.out.println("                         -----------------------------------------------");
+            System.out.println();
+            premierCoup=true;
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            System.err.println("Classe non trouvée");
+            stratB = null;
+        }
+    }
+
     /**
      * Initialisation du jeu sans Humain
      * @param _nbJoueurs le nombre d'IA
@@ -135,24 +179,24 @@ public class Jeu{
         // Variables temporaires
         int a;
         String p;
-        
+
         // Initialisation commune
         init_commun();
-       
-	nbJoueurs=_nbJoueurs;
-	joueurs= new Joueur[nbJoueurs];
-	for(int i=0; i<nbJoueurs; i++){
-	    joueurs[i]=new Joueur();
-	    joueurs[i].avancement = new int[11];
-	    for(int j=0; j<11; j++)
-		joueurs[i].avancement[j] = 0;
-	    joueurs[i].score=0;
-	    joueurs[i].pseudo="IA";
-	    joueurs[i].status=1;
-	}
-	// Determination du 1er joueur
-	a=rand.nextInt(nbJoueurs);
-	actif=a;
+
+        nbJoueurs=_nbJoueurs;
+        joueurs= new Joueur[nbJoueurs];
+        for(int i=0; i<nbJoueurs; i++){
+            joueurs[i]=new Joueur();
+            joueurs[i].avancement = new int[11];
+            for(int j=0; j<11; j++)
+                joueurs[i].avancement[j] = 0;
+            joueurs[i].score=0;
+            joueurs[i].pseudo="IA";
+            joueurs[i].status=1;
+        }
+        // Determination du 1er joueur
+        a=rand.nextInt(nbJoueurs);
+        actif=a;
         commence=a;
         premierCoup=true;
     }
@@ -161,28 +205,28 @@ public class Jeu{
      * Réinitialise les valeurs par défaut pour démarrer une nouvelle partie
      */
     public void newgame(){
-	for(int i=0; i<11 ;i++)
-	    fini[i]=false;
-	choixPossible=false;
-	for(int i=0; i<11 ;i++)
-	    bloque[i]=false;
+        for(int i=0; i<11 ;i++)
+            fini[i]=false;
+        choixPossible=false;
+        for(int i=0; i<11 ;i++)
+            bloque[i]=false;
         commence=(commence+1)%nbJoueurs;
-	actif=commence;
+        actif=commence;
         premierCoup=true;
-	for(int i=0; i<nbJoueurs; i++){
-	    for(int j=0; j<11; j++)
-		joueurs[i].avancement[j] = 0;
-	    joueurs[i].score=0;
-	}
+        for(int i=0; i<nbJoueurs; i++){
+            for(int j=0; j<11; j++)
+                joueurs[i].avancement[j] = 0;
+            joueurs[i].score=0;
+        }
 
-	nbCoup=0;
-	resetChoix();
-	bonzes[0][0]=0;
-	bonzes[0][1]=0;
-	bonzes[1][0]=0;
-	bonzes[1][1]=0;
-	bonzes[2][0]=0;
-	bonzes[2][1]=0;
+        nbCoup=0;
+        resetChoix();
+        bonzes[0][0]=0;
+        bonzes[0][1]=0;
+        bonzes[1][0]=0;
+        bonzes[1][1]=0;
+        bonzes[2][0]=0;
+        bonzes[2][1]=0;
     }
 
 
@@ -222,9 +266,9 @@ public class Jeu{
         // On affiche l'avancement du joueur actif
         System.out.print(" actif: J" + (actif + 1));
         for (int i = 0; i < 11; i++){
-	    if(fini[i]){
-		System.out.print("      X ");
-	    }
+            if(fini[i]){
+                System.out.print("      X ");
+            }
             else if(bonzes[0][0]==(i+2)){
                 if(bonzes[0][1]<10)
                     System.out.print(" ");
@@ -244,7 +288,7 @@ public class Jeu{
                 System.out.print("      _ ");
         }
         System.out.println();
-	System.out.println();
+        System.out.println();
     }
 
     /**
@@ -256,13 +300,65 @@ public class Jeu{
         // Tirage aléatoire des dés
         for(int i=0; i<4; i++)
             des[i]=rand.nextInt(6)+1;
+        // Determination des possibilités d'avancement + indication sur les choix possible suivant l'état du jeu
+        possibilite[0][0]=des[0]+des[1];
+        possibilite[1][0]=des[2]+des[3];
+        possibilite[2][0]=des[0]+des[2];
+        possibilite[3][0]=des[1]+des[3];
+        possibilite[4][0]=des[0]+des[3];
+        possibilite[5][0]=des[1]+des[2];
+        for (int i=0; i<6; i++)
+            possibilite[i][1]=possible(possibilite[i][0]);
+    }
+
+    /**
+     * Construction des choix pouvant être joués
+     */
+    public void construireChoix(){
+        int cpt=0;
+        int tmp;
+        if(choixPossible){
+            // Pour chaque combinaison de 2 paires de dé on regarde détermine les choix possibles suivant le nb de bonzes restants
+            for(int i=0; i<3; i++){
+                tmp=possibilite[2*i][1] + possibilite[2*i+1][1];
+                // Cas ou on joue sur 2 colones
+                // Soit 2 nouvelle tmp==20 et au moins 2 bonzes restant
+                // Soit 2 colones ou on avait déja des bonzes tmp==2
+                // Soit 1 nouvelle et 1 "ancienne" tmp==11
+                if((tmp==20 && bonzesRestants>1) || tmp==11 || tmp==2){
+                    lesChoix[cpt][0]=possibilite[2*i][0];
+                    lesChoix[cpt][1]=possibilite[2*i+1][0];
+                    cpt++;
+                }
+                // Cas ou on peut jouer sur 2 nouvelles colones mais 1 seul bonzes restant
+                // On propose donc les 2 choix
+                else if((tmp==20) && (bonzesRestants<2)){
+                    lesChoix[cpt][0]=possibilite[2*i][0];
+                    lesChoix[cpt][1]=0;
+                    lesChoix[cpt+1][0]=possibilite[2*i+1][0];
+                    lesChoix[cpt+1][1]=0;
+                    cpt+=2;
+                }
+                // Cas ou on peut avancer que sur un seule colone déjà prise...
+                else if (tmp==1 || (tmp==10 && bonzesRestants>0)){
+                    if(possibilite[2*i][1]==0)
+                        lesChoix[cpt][0]=possibilite[2*i+1][0];
+                    else
+                        lesChoix[cpt][0]=possibilite[2*i][0];
+                    lesChoix[cpt][1] = 0;
+                    cpt++;
+                }
+            }
+        }
+        // On stock le nb de choix dispo
+        nbChoix=cpt;
     }
 
     /**
      * Affichage des choix disponibles
      */
     public void printChoix(){
-	printDes();
+        printDes();
         int cpt=0;
         for(int i=0; i<nbChoix; i++){
             if(lesChoix[i][1]>0)
@@ -276,32 +372,32 @@ public class Jeu{
      * Affichage des dés.
      */
     public void printDes(){
-	System.out.println("Lancé de dés: " + des[0] + " - " + des[1] + " - " + des[2] + " - " + des[3]);
+        System.out.println("Lancé de dés: " + des[0] + " - " + des[1] + " - " + des[2] + " - " + des[3]);
     }
 
     /**
      * Demande de decision du joueur parmis les choix disponibles
      */
     public void decision(){
-	//Si joueur humain on demande de decider
-	if(joueurs[actif].status==0){
-	    int a=-1;
-	    while(a<0 || a>=nbChoix){
-		System.out.println("Veuillez choisir parmis les choix suivants: (entrer le numéro du choix)");
-		printChoix();
-		Scanner sc = new Scanner(System.in);
-		a = sc.nextInt();
-		if (a < 0 || a >= nbChoix)
-		    System.out.println("CHOIX INVALIDE !!!");
-		else{
-		    appliquerChoix(a);
-		}
-	    }
-	}
+        //Si joueur humain on demande de decider
+        if(joueurs[actif].status==0){
+            int a=-1;
+            while(a<0 || a>=nbChoix){
+                System.out.println("Veuillez choisir parmis les choix suivants: (entrer le numéro du choix)");
+                printChoix();
+                Scanner sc = new Scanner(System.in);
+                a = sc.nextInt();
+                if (a < 0 || a >= nbChoix)
+                    System.out.println("CHOIX INVALIDE !!!");
+                else{
+                    appliquerChoix(a);
+                }
+            }
+        }
         // sinon on utilise la stratégie de l'IA
-	else{
-	    appliquerChoix(strategieChoix());
-	}
+        else{
+            appliquerChoix(strategieChoix());
+        }
     }
 
     /**
@@ -329,21 +425,21 @@ public class Jeu{
     public boolean stop(){
         //Si joueur humain on demande de decider
         boolean res=false;
-	if(joueurs[actif].status==0){
-	    String tmp="";
-	    while(!tmp.equals("O") && !tmp.equals("N")){
-		System.out.println("Voulez vous continuer votre tour (O ou N)");
-		Scanner sc = new Scanner(System.in);
-		tmp = sc.next();
-		if(!tmp.equals("O") && !tmp.equals("N"))
-		    System.out.println("REPONSE INVALIDE !!!");
-		else if(tmp.equals("N"))
-		    res=true;
-	    }
-	}
+        if(joueurs[actif].status==0){
+            String tmp="";
+            while(!tmp.equals("O") && !tmp.equals("N")){
+                System.out.println("Voulez vous continuer votre tour (O ou N)");
+                Scanner sc = new Scanner(System.in);
+                tmp = sc.next();
+                if(!tmp.equals("O") && !tmp.equals("N"))
+                    System.out.println("REPONSE INVALIDE !!!");
+                else if(tmp.equals("N"))
+                    res=true;
+            }
+        }
         // sinon on utilise la stratégie de l'IA
-	else
-	    res=strategieStop();
+        else
+            res=strategieStop();
         return res;
     }
 
@@ -424,14 +520,15 @@ public class Jeu{
         boolean res=false;
         // Si un joueur a 3 points il gagne la partie
         if(joueurs[actif].score>=3){
-            res=true;        
+            res=true;
         }
         // Affichage du gagnant seulement si un Humain joue
         boolean human=false;
         for(int i=0; i<nbJoueurs; i++)
             if(joueurs[i].status==0)
                 human=true;
-        if(human)
+        // A reverifier
+        if(human && res)
             System.out.println("VICTOIRE!!! " + joueurs[actif].pseudo + " a gagné la partie.");
         return res;
     }
@@ -452,175 +549,75 @@ public class Jeu{
     }
 
     /**
-     * Le même joueur continue et initialisation des valeurs nécessaires
-     */
-    public void memeJoueur(){
-	resetChoix();
-    }
-    
-    // --------------------------------------------------------
-    //                    Q1
-    // --------------------------------------------------------
-    /**
      * Changement de joueur et initialisation des valeurs nécessaires
      */
     public void changementJoueur(){
-        // A compléter
         resetChoix();
-        resetBonzes();
-        resetBloques();
-        if(actif<(nbJoueurs-1)){
-            actif++;
+        bonzes[0][0]=0;
+        bonzes[0][1]=0;
+        bonzes[1][0]=0;
+        bonzes[1][1]=0;
+        bonzes[2][0]=0;
+        bonzes[2][1]=0;
+        actif=(actif+1)%nbJoueurs;
+        for(int i=0; i<11; i++){
+            bloque[i]=false;
         }
-        else{
-            actif = 0;
-        }
-        premierCoup = true;
+        bonzesRestants=3;
+        premierCoup=true;
     }
-    
+
+    /**
+     * Le même joueur continue et initialisation des valeurs nécessaires
+     */
+    public void memeJoueur(){
+        resetChoix();
+    }
+
     /**
      * Réinitialisation des choix possibles
      */
     public void resetChoix(){
-        // On réinitialise le tableau de choix
-        for(int i=0; i<6; i++){
-            lesChoix[i][0] = 0;
-            lesChoix[i][1] = 0;
+        for(int i=0; i <6; i++){
+            lesChoix[i][0]=0;
+            lesChoix[i][1]=0;
         }
-        // On réinitialise le nb de choix
-        nbChoix = 0;
-        // On remet choixPossibles à faux
         choixPossible = false;
+        nbChoix=0;
     }
 
     /**
-     * Réinitialisation des Bonzes
-     */
-    public void resetBonzes(){
-        for(int i=0; i<3; i++){
-            bonzes[i][0] = 0;
-            bonzes[i][1] = 0;
-        }
-        bonzesRestants = 3;
-    }
-    
-    /**
-     * Réinitialisation des voies bloquées
-     */
-    public void resetBloques(){
-        // A compléter
-        for(int i=0; i<11 ;i++) {
-            bloque[i] = false;
-        }
-    }
-    
-    // --------------------------------------------------------
-    //                    Fin Q1
-    // --------------------------------------------------------
-
-    // --------------------------------------------------------
-    //                    Q2
-    // --------------------------------------------------------
-    
-    /**
-     * Test la possibilité d'avancement sur la colonne "valeur" suivant l'état actuel du jeu
+     * Test la possibilité d'avancement sur la colone "valeur" suivant l'état actuel du jeu
      * @param valeur la colonne à tester
-     * @return 0 si pas possible, 1 si c'est possible sur une colonne ou un bonze est déjà présent, 10 si c'est possible avec un nouveau bonze
+     * @return 0 si pas possible, 1 si c'est possible sur une colone ou un bonze est déja présent, 10 si c'est possible avec un nouveau bonze
      */
     public int possible(int valeur){
-        int bonz = -1;
-        //on vérifie si le bonze est déjà présent dans la colonne
-        for (int i = 0; i < 3; i++) {
-            if (bonzes[i][0] == valeur) {
-                bonz = i;
-            }
+        int res=0;
+        // Si il nous reste des bonzes et que les colonnes ne sont pas fini (validé ou non)
+        // Alors on peut avancer
+        if(bonzesRestants>0 && !fini[valeur-2] && !bloque[valeur-2]){
+            // 1 quand on avance un bonze déjà placé, 10 dans le cas contraire
+            if (bonzes[0][0] == valeur || bonzes[1][0] == valeur || bonzes[2][0] == valeur)
+                res = 1;
+            else
+                res = 10;
+            choixPossible=true;
         }
-        if(bonz==-1){
-            if(bonzesRestants>0){
-                return 10;
-            }
-            return 0;
+        // Si il ne reste pas de bonze on vérifie que la colones n'est pas bloqué et qu'on a déjà un bonze dessus
+        // Si c'est le cas on retourne 1
+        else if((bonzes[0][0]==valeur || bonzes[1][0]==valeur || bonzes[2][0]==valeur)&& !bloque[valeur-2] && !fini[valeur-2]){
+            res=1;
+            choixPossible=true;
         }
-        else{
-            if(bloque[valeur]==true){
-                return 0;
-            }
-            return 1;
-        }
+        // Sinon on retourne 0
+        return res;
     }
 
-    /**
-     * Regroupe les dés et appelle la méthode possible pour chaque regroupement
-     * @param aucun
-     * @return aucun
-     */
-    public void regroupement() {
-        possibilite[0][0]=des[0]+des[1];
-        possibilite[1][0]=des[2]+des[3];
-        possibilite[2][0]=des[0]+des[2];
-        possibilite[3][0]=des[1]+des[3];
-        possibilite[4][0]=des[0]+des[3];
-        possibilite[5][0]=des[2]+des[1];
-
-        for(int i=0; i<6; i++){
-            possibilite[i][1] = possible(possibilite[i][0]);
-            if(possibilite[i][1] != 0){
-                choixPossible = true;
-            }
-        }
-    }
-    
-    /**
-     * Construction des choix pouvant être joués
-     */
-    public void construireChoix(){
-        regroupement();
-        //REGROUPER LES CHOIX
-        for(int i=0, 2*i<6; i++){
-            if((possibilite[i][1]+possibilite[i+1][1]==20) && (bonzesRestants==2)){
-                lesChoix[nbChoix][0] = possibilite[i][0];
-                lesChoix[nbChoix][1] = possibilite[i+1][0];
-                nbChoix++;
-            }
-            if((possibilite[i][1]+possibilite[i+1][1]==20) && (bonzesRestants==1)){
-                lesChoix[nbChoix][0] = possibilite[i][0];
-                lesChoix[nbChoix][1] = 0;
-                lesChoix[nbChoix+1][0] = possibilite[i+1][0];
-                lesChoix[nbChoix+1][1] = 0;
-                nbChoix+=2;
-            }
-            if(possibilite[i][1]+possibilite[i+1][1]==11){
-                lesChoix[nbChoix][0] = possibilite[i][0];
-                lesChoix[nbChoix][1] = possibilite[i+1][0];
-                nbChoix++;
-            }
-            if(possibilite[i][1]+possibilite[i+1][1]==10){
-                if(possibilite[i][1]==0){
-                    lesChoix[nbChoix][0] = possibilite[i+1][0];
-                }
-                else {
-                    lesChoix[nbChoix][0] = possibilite[i][0];
-                }
-                nbChoix++;
-            }
-            if(possibilite[i][1]+possibilite[i+1][1]==2){
-                lesChoix[nbChoix][0] = possibilite[i][0];
-                lesChoix[nbChoix][1] = possibilite[i+1][0];
-                nbChoix++;
-            }
-            //MANQUE 1 ET 0
-        }
-    }
-
-    // --------------------------------------------------------
-    //                    Fin Q2
-    // --------------------------------------------------------
-    
     /**
      * Déroulement d'une partie
      */
     public void run(){
-	boolean end=false;
+        boolean end=false;
         this.init();
         while(!end){
             // si c'est pas le 1er coup du joueur
@@ -629,54 +626,123 @@ public class Jeu{
                 if(stop()){
                     // si il arrete on valide et on change de joueur
                     validerArret();
-		    end=victoire();
+                    end=victoire();
                     changementJoueur();
-		    nbCoup=0;
-		    if(!end){
-			System.out.println();
-			System.out.println("                         -----------------------------------------------");
-			System.out.print("                                 ");
-			System.out.println(joueurs[(actif+nbJoueurs-1)%nbJoueurs].pseudo + " a validé son avancement.");
-			System.out.print("                                 ");
-			System.out.println("C'est au tour de " + joueurs[actif].pseudo + ".");
-			System.out.println("                         -----------------------------------------------");
-			System.out.println();
-		    }
+                    nbCoup=0;
+                    if(!end){
+                        System.out.println();
+                        System.out.println("                         -----------------------------------------------");
+                        System.out.print("                                 ");
+                        System.out.println(joueurs[(actif+nbJoueurs-1)%nbJoueurs].pseudo + " a validé son avancement.");
+                        System.out.print("                                 ");
+                        System.out.println("C'est au tour de " + joueurs[actif].pseudo + ".");
+                        System.out.println("                         -----------------------------------------------");
+                        System.out.println();
+                    }
                 }
                 // sinon on reste sur le même joueur
                 else{
                     memeJoueur();
-		    nbCoup++;
-		}
+                    nbCoup++;
+                }
             }
-	    if(!end){
-		// on affiche l'avancement du jeu
-		this.printAvancement();
-		// on jete les dés
-		this.jeterLesDes();
-		// on construit et propose les choix dispo si il y en a
-		this.construireChoix();
-		if(this.choixPossible){
-		    // si oui on demande au joueur de choisir
-		    this.decision();
-		    printAvancement();
-		}
-		else{
-		    // Sinon son tour et perdu on change de joueur sans validé son avancement
-		    System.out.println();
-		    System.out.println("                         -----------------------------------------------");
-		    System.out.print("                                   ");
-		    this.printDes();
-		    System.out.print("                                   ");
-		    System.out.println("Aucun choix possible !");
-		    this.changementJoueur();
-		    nbCoup=0;
-		    System.out.print("                                   ");
-		    System.out.println("C'est au tour de " + joueurs[actif].pseudo + ".");
-		    System.out.println("                         -----------------------------------------------");
-		    System.out.println();
-		}
-	    }
+            if(!end){
+                // on affiche l'avancement du jeu
+                this.printAvancement();
+                // on jete les dés
+                this.jeterLesDes();
+                // on construit et propose les choix dispo si il y en a
+                this.construireChoix();
+                if(this.choixPossible){
+                    // si oui on demande au joueur de choisir
+                    this.decision();
+                    printAvancement();
+                }
+                else{
+                    // Sinon son tour et perdu on change de joueur sans validé son avancement
+                    System.out.println();
+                    System.out.println("                         -----------------------------------------------");
+                    System.out.print("                                   ");
+                    this.printDes();
+                    System.out.print("                                   ");
+                    System.out.println("Aucun choix possible !");
+                    this.changementJoueur();
+                    nbCoup=0;
+                    System.out.print("                                   ");
+                    System.out.println("C'est au tour de " + joueurs[actif].pseudo + ".");
+                    System.out.println("                         -----------------------------------------------");
+                    System.out.println();
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Affronter une IA, pour la tester
+     */
+    public void runHvsIA(int nStrat){
+        boolean end=false;
+        this.initHvsIA(nStrat);
+
+        if(stratB == null)
+            return;
+
+        while(!end){
+            // si c'est pas le 1er coup du joueur
+            if(!premierCoup){
+                // on lui demande de continuer ou d'arreter
+                if(stop()){
+                    // si il arrete on valide et on change de joueur
+                    validerArret();
+                    end=victoire();
+                    changementJoueur();
+                    nbCoup=0;
+                    if(!end){
+                        System.out.println();
+                        System.out.println("                         -----------------------------------------------");
+                        System.out.print("                                 ");
+                        System.out.println(joueurs[(actif+nbJoueurs-1)%nbJoueurs].pseudo + " a validé son avancement.");
+                        System.out.print("                                 ");
+                        System.out.println("C'est au tour de " + joueurs[actif].pseudo + ".");
+                        System.out.println("                         -----------------------------------------------");
+                        System.out.println();
+                    }
+                }
+                // sinon on reste sur le même joueur
+                else{
+                    memeJoueur();
+                    nbCoup++;
+                }
+            }
+            if(!end){
+                // on affiche l'avancement du jeu
+                this.printAvancement();
+                // on jete les dés
+                this.jeterLesDes();
+                // on construit et propose les choix dispo si il y en a
+                this.construireChoix();
+                if(this.choixPossible){
+                    // si oui on demande au joueur de choisir
+                    this.decision();
+                    printAvancement();
+                }
+                else{
+                    // Sinon son tour et perdu on change de joueur sans validé son avancement
+                    System.out.println();
+                    System.out.println("                         -----------------------------------------------");
+                    System.out.print("                                   ");
+                    this.printDes();
+                    System.out.print("                                   ");
+                    System.out.println("Aucun choix possible !");
+                    this.changementJoueur();
+                    nbCoup=0;
+                    System.out.print("                                   ");
+                    System.out.println("C'est au tour de " + joueurs[actif].pseudo + ".");
+                    System.out.println("                         -----------------------------------------------");
+                    System.out.println();
+                }
+            }
         }
     }
 
@@ -703,8 +769,8 @@ public class Jeu{
             for(int a=0; a<groupes.length-1; a++){
                 for(int b=a+1;b<groupes.length; b++){
                     System.out.print(a + " vs " + b);
-                    stratA=(Strategie) Class.forName("strategies.Strat"+groupes[a]).newInstance();
-                    stratB=(Strategie) Class.forName("strategies.Strat"+groupes[b]).newInstance();
+                    stratA=(Strategie) Class.forName("strategies.Strat"+groupes[a]).getDeclaredConstructor().newInstance();
+                    stratB=(Strategie) Class.forName("strategies.Strat"+groupes[b]).getDeclaredConstructor().newInstance();
 
                     int[][] victoire=new int[2][4];
                     for(int i=0; i<nbJoueurs; i++)
@@ -795,7 +861,7 @@ public class Jeu{
             }
 
             for(int i=0; i<groupes.length; i++){
-                Strategie tmp = (Strategie)Class.forName("strategies.Strat"+groupes[i]).newInstance();
+                Strategie tmp = (Strategie)Class.forName("strategies.Strat"+groupes[i]).getDeclaredConstructor().newInstance();
 
                 System.out.println(tmp.getName() + ": " + res[i][0] + " " + res[i][1] + " " + res[i][2] + " " + res[i][3]+ " " + res[i][4]);
             }
@@ -835,7 +901,7 @@ public class Jeu{
         }
         return bonzes;
     }
-    
+
     /**
      * Permet de récupérer le joueur actif
      * @param aucun
@@ -920,15 +986,15 @@ public class Jeu{
      * Permet de l'avancement du joueur actif
      * @param aucun
      * @return le tableau avancement du joueur actif
-     */    
+     */
     public int[] avancementJoueurEnCours() {
         return joueurs[actif].avancement.clone();
     }
-     /**
+    /**
      * Permet de récupérer le tableau avancement de l'adversaire du joueur actif
      * @param aucun
      * @return le tableau avancement du second joueur
-     */   
+     */
     public int[] avancementAutreJoueur() {
         return joueurs[(actif+1)%2].avancement.clone();
     }
@@ -936,7 +1002,7 @@ public class Jeu{
      * Permet de récupérer score du joueur en cours
      * @param aucun
      * @return le score du joueur actif
-     */    
+     */
     public int scoreJoueurEnCours() {
         return joueurs[actif].score;
     }
@@ -944,7 +1010,7 @@ public class Jeu{
      * Permet de récupérer le score de l'adversaire du joueur en cours
      * @param aucun
      * @return le score du second joueur
-     */    
+     */
     public int scoreAutreJoueur() {
         return joueurs[(actif+1)%2].score;
     }
