@@ -36,14 +36,25 @@ public class Strat143 implements Strategie {
 
 
        //si 1 seul bonze posé, correspond, jouer celui-là
+       //si 1 bonze posé et un des choix de paire correspond, jouer
        if(bonzesPosés == 1){
+           for(int i=0; i<j.getNbChoix(); i++){
+               if(positionBonzes[0][0] == choixpossibles[i][1] && positionBonzes[0][0] == choixpossibles[i][0]){
+                   return i;
+               }
+           }
+           for(int i=0; i<j.getNbChoix(); i++){
+               if((positionBonzes[0][0] == choixpossibles[i][0] && choixpossibles[i][1] == 0) || (positionBonzes[0][0] == choixpossibles[i][1] && choixpossibles[i][0] == 0)){
+                   return i;
+               }
+           }
            for(int i=0; i<j.getNbChoix(); i++){
                if(positionBonzes[0][0] == choixpossibles[i][0] || positionBonzes[0][0] == choixpossibles[i][1]){
                    return i;
                }
            }
        }
-       //si 2 bonzes posés qui correspondent à une paire, la jouer
+       //si 2 bonzes posés correspondent à une paire, la jouer
        if(bonzesPosés == 2){
            for(int i=0; i<j.getNbChoix(); i++){
                if(positionBonzes[0][0] == choixpossibles[i][0] && positionBonzes[1][0] == choixpossibles[i][1] || positionBonzes[1][0] == choixpossibles[i][0] && positionBonzes[0][0] == choixpossibles[i][1]){
@@ -51,6 +62,7 @@ public class Strat143 implements Strategie {
                }
            }
        }
+
 
        //si une paire, la jouer
        for(int i=0; i< j.getNbChoix(); i++){
@@ -80,8 +92,11 @@ public class Strat143 implements Strategie {
                    return true;
                }
            }
-           //à étoffer ici
-           return false;
+           //à changer
+           if(j.getNbCoup()<4){
+               return false;
+           }
+           return true;
        }
    }
 
