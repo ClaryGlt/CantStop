@@ -44,8 +44,8 @@ public class Jeu{
 
     private Clavier clavier;
 
-    private Strategie stratA = new Strat0();
-    private Strategie stratB = new Strat143();
+    private Strategie stratA = new Strat143();
+    private Strategie stratB = new Strat0();
 
     private int commence;
 
@@ -890,7 +890,7 @@ public class Jeu{
     }
 
     /**
-     * Permet de récupérer le tableau des bonzes (Voies + positions) 
+     * Permet de récupérer le tableau des bonzes (Voies + positions)
      * @param aucun
      * @return le tableau des bonzes
      */
